@@ -5,112 +5,97 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            margin: 0;
-            padding: 0;
             text-align: center;
+            background-color: #f2f2f2;
         }
-        header {
-            background: #4CAF50;
-            color: white;
-            padding: 15px;
-            font-size: 24px;
-        }
-        section {
-            background: white;
+        .container {
             width: 80%;
-            margin: 20px auto;
+            margin: auto;
+            background: white;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
         }
-        h2, h3 {
-            color: #333;
+        img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
         }
-        ul {
-            list-style: none;
-            padding: 0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
         }
-        li {
-            margin: 8px 0;
+        table, th, td {
+            border: 1px solid gray;
+        }
+        th, td {
             padding: 8px;
-            background: #f9f9f9;
-            border-radius: 5px;
-        }
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #45a049;
-        }
-        input {
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
         }
         form {
-            margin: 10px 0;
-        }
-        .remove-btn {
-            background: red;
-        }
-        .remove-btn:hover {
-            background: darkred;
-        }
-        .bmi-result {
-            margin-top: 10px;
-            padding: 10px;
-            background: #e8f5e9;
-            border-radius: 5px;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
-    <header>
-        Welcome to Exercise Manager
-    </header>
+<div class="container">
+    <h1>🏋️ Exercise Manager</h1>
+    <p>Date: {{ date }}</p>
+    <p>Total Calories Burnt: {{ total_calories }}</p>
+    {% if bmi_value %}
+        <p>Your BMI: {{ bmi_value }}</p>
+        <p>{{ recommendation }}</p>
+    {% endif %}
+    <img src="{{ url_for('static', filename='gym.jpg') }}" alt="Gym Image">
 
-    <section>
-        <p>Today's date: <strong>{{ today }}</strong></p>
+    <h2>Add Exercise</h2>
+    <form action="/add" method="POST">
+        <input type="text" name="name" placeholder="Exercise Name" required><br><br>
+        <input type="number" name="sets" placeholder="Sets" required><br><br>
+        <input type="number" name="duration" placeholder="Duration (min)" required><br><br>
+        <label>With Weight?</label>
+        <select name="weight_option">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+        </select><br><br>
+        <input type="number" step="0.1" name="weight_value" placeholder="Weight (kg)"><br><br>
+        <button type="submit">Add Exercise</button>
+    </form>
 
-        <h2>Exercises</h2>
-        <ul>
-            {% for exercise in exercises %}
-                <li>
-                    {{ exercise }}
-                    <form method="POST" style="display:inline;">
-                        <button class="remove-btn" type="submit" name="remove" value="{{ exercise }}">Remove</button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
+    <h2>Current Exercises</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Sets</th>
+            <th>Duration</th>
+            <th>Weight</th>
+            <th>Calories</th>
+            <th>Action</th>
+        </tr>
+        {% for exercise in exercises %}
+        <tr>
+            <td>{{ exercise.name }}</td>
+            <td>{{ exercise.sets }}</td>
+            <td>{{ exercise.duration }}</td>
+            <td>
+                {% if exercise.weight_option == 'no' %}
+                    No weight
+                {% else %}
+                    {{ exercise.weight_value }} kg
+                {% endif %}
+            </td>
+            <td>{{ exercise.calories }}</td>
+            <td><a href="/remove/{{ loop.index0 }}">Remove</a></td>
+        </tr>
+        {% endfor %}
+    </table>
 
-        <h3>Add a New Exercise</h3>
-        <form method="POST">
-            <input type="text" name="exercise" placeholder="New exercise" required>
-            <button type="submit" name="add">Add</button>
-        </form>
-    </section>
-
-    <section>
-        <h2>BMI Calculator</h2>
-        <form method="POST">
-            <input type="number" name="weight" placeholder="Weight (kg)" step="0.1" required>
-            <input type="number" name="height" placeholder="Height (cm)" step="0.1" required>
-            <button type="submit" name="calculate_bmi">Calculate BMI</button>
-        </form>
-
-        {% if bmi_result %}
-            <div class="bmi-result">
-                <p><strong>Your BMI:</strong> {{ bmi_result }}</p>
-                <p><strong>Calorie Advice:</strong> {{ calorie_advice }}</p>
-            </div>
-        {% endif %}
-    </section>
+    <h2>BMI Calculator</h2>
+    <form action="/bmi" method="POST">
+        <input type="number" step="0.1" name="height" placeholder="Height (cm)" required><br><br>
+        <input type="number" step="0.1" name="weight" placeholder="Weight (kg)" required><br><br>
+        <button type="submit">Calculate BMI</button>
+    </form>
+</div>
 </body>
 </html>
