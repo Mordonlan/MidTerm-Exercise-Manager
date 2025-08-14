@@ -1,17 +1,33 @@
-# Exercise Manager – Flask + Docker
+MidTerm-Exercise-Manager
+Introduction-
 
-This is a small web application built with Flask that lets you keep track of exercises, calculate your BMI, and get recommendations for how many calories you should burn.  
-It’s fully containerized with Docker, so it’s easy to run anywhere.
+As my midterm project, I have the pleasure of introducing MidTerm-Exercise-Manager — your personal digital workout companion.
+With MidTerm-Exercise-Manager, you can log your sports activities, track sets and reps, record weights (or bodyweight exercises), and even estimate the calories you’ve burned so far.
+There are currently 3 main functionalities:
+Exercise Tracking
+An exercise entry contains:
+Sport / Activity name
 
-## Features
-- Add and remove exercises from a list.
-- Calculate your BMI from your weight and height.
-- Get simple advice based on your BMI category.
-- Run the whole thing in a Docker container.
+Number of sets
+Reps per set
+Weight used (optional — for bodyweight exercises, leave it blank)
+Calories burned estimate
 
-## How to Run
+
+Summary Table
+View a neatly formatted table showing:
+All logged exercises
+Total sets completed for each activity
+Total weight lifted (if applicable)
+Total calories burned
+Statistics
+At the end, you get a clear overview of your training session — perfect for staying motivated and seeing your progress over time.
+
+
 
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/YOUR-USERNAME/YOUR-REPO.git
 cd YOUR-REPO
+
+
