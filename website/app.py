@@ -3,16 +3,12 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# I will keep the exercises here in a list
 exercises = []
 
-# Home page
 @app.route('/')
 def home():
-    # get the current date
     current_date = datetime.now().strftime("%Y-%m-%d")
 
-    # calculate total calories
     total_calories = 0
     for item in exercises:
         if "calories" in item:
@@ -23,17 +19,14 @@ def home():
                            date=current_date,
                            total_calories=total_calories)
 
-# Add exercise page
 @app.route('/add', methods=['POST'])
 def add_exercise():
-    # get form data one by one
     name = request.form.get("name")
     sets = request.form.get("sets")
     duration = request.form.get("duration")
     weight_option = request.form.get("weight_option")
     weight_value = request.form.get("weight_value")
 
-    # make sure numbers are numbers
     try:
         sets = int(sets)
     except:
@@ -47,13 +40,11 @@ def add_exercise():
     except:
         weight_value = 0
 
-    # calculate calories burnt (very simple formula)
     if weight_option == "no":
         calories = duration * sets * 3
     else:
         calories = duration * sets * (3 + (weight_value / 10))
 
-    # create the exercise dictionary
     exercise_item = {}
     exercise_item["name"] = name
     exercise_item["sets"] = sets
@@ -62,27 +53,23 @@ def add_exercise():
     exercise_item["weight_value"] = weight_value
     exercise_item["calories"] = calories
 
-    # add to the exercises list
     exercises.append(exercise_item)
 
-    # go back to home page
     return redirect('/')
 
-# Remove exercise
 @app.route('/remove/<int:index>')
 def remove_exercise(index):
     if index >= 0 and index < len(exercises):
         exercises.pop(index)
     return redirect('/')
 
-# BMI calculator
 @app.route('/bmi', methods=['POST'])
 def bmi():
     height = request.form.get("height")
     weight = request.form.get("weight")
 
     try:
-        height = float(height) / 100  # convert to meters
+        height = float(height) / 100  
     except:
         height = 0
 
@@ -96,7 +83,6 @@ def bmi():
     else:
         bmi_value = 0
 
-    # recommend calories to burn
     if bmi_value < 18.5:
         recommendation = "You are underweight, focus on building mass."
     elif bmi_value < 25:

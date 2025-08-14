@@ -32,7 +32,7 @@ def main():
             print("Goodbye!")
             break
         else:
-            print("❌ Incorrect choice, please try again.")
+            print(" Incorrect choice, please try again.")
 
 if __name__ == "__main__":
     main()

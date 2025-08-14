@@ -1,101 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exercise Manager</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f2f2f2;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        img {
-            width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        table, th, td {
-            border: 1px solid gray;
-        }
-        th, td {
-            padding: 8px;
-        }
-        form {
-            margin-top: 15px;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<div class="container">
-    <h1>🏋️ Exercise Manager</h1>
-    <p>Date: {{ date }}</p>
-    <p>Total Calories Burnt: {{ total_calories }}</p>
-    {% if bmi_value %}
-        <p>Your BMI: {{ bmi_value }}</p>
-        <p>{{ recommendation }}</p>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Exercise Tracker</h1>
+    <p class="text-center">Date: {{ date }}</p>
+
+    <!-- Add Exercise Form -->
+    <div class="card p-4 shadow-sm mb-4">
+        <h4>Add New Exercise</h4>
+        <form action="/add" method="POST" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Exercise Name</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Sets</label>
+                <input type="number" name="sets" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Duration (mins)</label>
+                <input type="number" name="duration" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Weight Used?</label>
+                <select name="weight_option" class="form-select">
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Weight (kg)</label>
+                <input type="number" step="0.1" name="weight_value" class="form-control">
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary">Add Exercise</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table of Exercises -->
+    {% if exercises %}
+    <div class="card p-4 shadow-sm">
+        <h4>Exercises List</h4>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Sets</th>
+                    <th>Duration (mins)</th>
+                    <th>Weight Option</th>
+                    <th>Weight (kg)</th>
+                    <th>Calories Burned</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for exercise in exercises %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ exercise.name }}</td>
+                    <td>{{ exercise.sets }}</td>
+                    <td>{{ exercise.duration }}</td>
+                    <td>{{ exercise.weight_option }}</td>
+                    <td>{{ exercise.weight_value }}</td>
+                    <td>{{ exercise.calories }}</td>
+                    <td>
+                        <a href="/remove/{{ loop.index0 }}" class="btn btn-danger btn-sm">X</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr class="table-secondary">
+                    <td colspan="6" class="text-end fw-bold">Total Calories Burned</td>
+                    <td colspan="2" class="fw-bold">{{ total_calories }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">No exercises added yet.</div>
     {% endif %}
-    <img src="{{ url_for('static', filename='gym.jpg') }}" alt="Gym Image">
 
-    <h2>Add Exercise</h2>
-    <form action="/add" method="POST">
-        <input type="text" name="name" placeholder="Exercise Name" required><br><br>
-        <input type="number" name="sets" placeholder="Sets" required><br><br>
-        <input type="number" name="duration" placeholder="Duration (min)" required><br><br>
-        <label>With Weight?</label>
-        <select name="weight_option">
-            <option value="no">No</option>
-            <option value="yes">Yes</option>
-        </select><br><br>
-        <input type="number" step="0.1" name="weight_value" placeholder="Weight (kg)"><br><br>
-        <button type="submit">Add Exercise</button>
-    </form>
-
-    <h2>Current Exercises</h2>
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Sets</th>
-            <th>Duration</th>
-            <th>Weight</th>
-            <th>Calories</th>
-            <th>Action</th>
-        </tr>
-        {% for exercise in exercises %}
-        <tr>
-            <td>{{ exercise.name }}</td>
-            <td>{{ exercise.sets }}</td>
-            <td>{{ exercise.duration }}</td>
-            <td>
-                {% if exercise.weight_option == 'no' %}
-                    No weight
-                {% else %}
-                    {{ exercise.weight_value }} kg
-                {% endif %}
-            </td>
-            <td>{{ exercise.calories }}</td>
-            <td><a href="/remove/{{ loop.index0 }}">Remove</a></td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <h2>BMI Calculator</h2>
-    <form action="/bmi" method="POST">
-        <input type="number" step="0.1" name="height" placeholder="Height (cm)" required><br><br>
-        <input type="number" step="0.1" name="weight" placeholder="Weight (kg)" required><br><br>
-        <button type="submit">Calculate BMI</button>
-    </form>
+    <!-- BMI Calculator -->
+    <div class="card p-4 shadow-sm mt-4">
+        <h4>BMI Calculator</h4>
+        <form action="/bmi" method="POST" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Height (cm)</label>
+                <input type="number" name="height" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Weight (kg)</label>
+                <input type="number" step="0.1" name="weight" class="form-control" required>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button class="btn btn-success w-100">Calculate BMI</button>
+            </div>
+        </form>
+        {% if bmi_value %}
+            <p class="mt-3">Your BMI: <strong>{{ bmi_value }}</strong></p>
+            <p>{{ recommendation }}</p>
+        {% endif %}
+    </div>
 </div>
+
 </body>
 </html>
