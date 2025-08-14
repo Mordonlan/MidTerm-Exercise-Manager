@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exercise Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        header {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+        }
+        section {
+            background: white;
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2, h3 {
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 8px 0;
+            padding: 8px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        input {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        form {
+            margin: 10px 0;
+        }
+        .remove-btn {
+            background: red;
+        }
+        .remove-btn:hover {
+            background: darkred;
+        }
+        .bmi-result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Welcome to Exercise Manager
+    </header>
+
+    <section>
+        <p>Today's date: <strong>{{ today }}</strong></p>
+
+        <h2>Exercises</h2>
+        <ul>
+            {% for exercise in exercises %}
+                <li>
+                    {{ exercise }}
+                    <form method="POST" style="display:inline;">
+                        <button class="remove-btn" type="submit" name="remove" value="{{ exercise }}">Remove</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h3>Add a New Exercise</h3>
+        <form method="POST">
+            <input type="text" name="exercise" placeholder="New exercise" required>
+            <button type="submit" name="add">Add</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>BMI Calculator</h2>
+        <form method="POST">
+            <input type="number" name="weight" placeholder="Weight (kg)" step="0.1" required>
+            <input type="number" name="height" placeholder="Height (cm)" step="0.1" required>
+            <button type="submit" name="calculate_bmi">Calculate BMI</button>
+        </form>
+
+        {% if bmi_result %}
+            <div class="bmi-result">
+                <p><strong>Your BMI:</strong> {{ bmi_result }}</p>
+                <p><strong>Calorie Advice:</strong> {{ calorie_advice }}</p>
+            </div>
+        {% endif %}
+    </section>
+</body>
+</html>
