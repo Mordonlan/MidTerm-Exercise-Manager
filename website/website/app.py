@@ -3,8 +3,10 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+# Initial exercise list
 exercises = ["Push-ups", "Squats", "Plank"]
 
+# Function to estimate calories burned based on BMI
 def calories_needed(bmi):
     if bmi < 18.5:
         return "You may need to gain weight. Aim for light exercise."
